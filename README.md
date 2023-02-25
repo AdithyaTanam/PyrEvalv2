@@ -1,12 +1,20 @@
 # PyrEval 2
 ## PyrEval_mongo
-The documentation for PyrEval in this branch is similar to the older branch as mentioned in the below sections. 
+The documentation for PyrEval in this branch is similar to the main branch, much of which is copied below after this
+introduction to the PyrEval-mongo branch. This mongo branch of PyrEval is for utilizing a mongo database to store 
+inputs and outputs, and to run PyrEval as a service.  This branch was developed to support use of PyrEval in classrooms 
+as part of a research project. The overall design of this service, which can use multiple workers through gunicorn,
+is illsutrated in the figure below:
+
+<img src="Img/PyrEval_As_A_Service.png" height="40%" width="40%"/>
 
 With PyrEval_mongo, we have integrated PyrEval with MongoDB and built it into a RESTful service so it can be used by the front end Notebook to process web requests. This version of PyrEval will enable students to submit their essays and get immediate feedback.
 
 The initial setup of MongoDB can be found in the Initial_Setup_Queries.mongodb in the MongoDB folder.
 
-There are 3 major PyrEval scripts in this version,
+There are 3 major PyrEval scripts in this version, and changes throughout to various PyrEval scripts.  The figure above shows the design of the Mongo
+version of PyrEval, and the three major PyrEval scripts are identified below.  Any script whose file name ends in _mongo_maj.py
+
 
 1. pyreval_service.py
 This code is the flask implementation of PyrEval and can be run as a flask instance. Requests to this can be sent using Postman or using Axios in another script.
@@ -29,7 +37,7 @@ This function can also be run on multiple workers using the command,
     gunicorn --workers 4 --timeout 1200 --log-level=DEBUG --bind 0.0.0.0:5000 pyreval_wsgi:app
     
 2.PyrEval_mongo_launcher:
-This script runs PyrEval with MongoDB in launcher mode. Also, it only runs for one student at a time and the student metadata should be modified in the code.
+This script runs PyrEval with MongoDB in launcher mode. Also, it only runs for one student at a time and the student metadata should be modified in the PyrEval_mongo_launcher at line 283 where the student metadata for a student in the DB is provided.
     
 3.PyrEval_mongo_serialtesting:
 This script currently takes "n" number of student essays randomly from the database and processes those essays.
@@ -65,22 +73,22 @@ The tool is aimed at two audiences. It can help educators evaluate the content o
 
 Below is an image showing the original pipeline and log output. 
 
-![PyrEval system pipeline and log output example](img/pyreval_img.png)
+![PyrEval system pipeline and log output example](Img/pyreval_img.png)
 
 PyrEval version 2 has been modified to include the original pipeline (shown again below) or a new pipeline for use with a computable rubric (PyrEval+CR) as described in [10, 11].  
 
-![PyrEval2 pipeline: original](img/pyreval_orig.png)
+![PyrEval2 pipeline: original](Img/pyreval_orig.png)
 
-![Pyreval2 pipeline: for PyrEval+CR [7,8]](img/pyreval_mod.png)
+![Pyreval2 pipeline: for PyrEval+CR [7,8]](Img/pyreval_mod.png)
 
 ## Requirements
 ### Installation Requirement 
-1. Python 3.6
+1. Python 3.6 (Has been tested with python versions up to 3.9; not guaranteed to work with higher versions)
 2. Stanford CoreNLP System [5], see download [link](https://stanfordnlp.github.io/CoreNLP/). PyrEval has been tested with version 4.4.0 of Stanford CoreNLP. The directory should be placed inside the Stanford subdirectory of the repository.
 3. Install the packages listed in requirements.txt to the environment along with additional dependencies:
 ```
 pip install -r requirements.txt
-sudo apt install python-lxml
+sudo apt install python-lxml         ## 02/16/23 - Optional; for using Windows/Cygwin
 python3 -m nltk.downloader punkt
 ```
 4. Java DK
